@@ -5,10 +5,10 @@ create table readers (
     name varchar(100) not null
 );
 
-Insert data into 'readers' table
+-- Insert data into 'readers' table
 insert into readers (name) values ('Alice Cooper'), ('Bob Marley'), ('Charlie Puth');
 
--- drop table if exists records;
+drop table if exists records;
 
 create table records (
     id serial primary key,
@@ -19,7 +19,7 @@ create table records (
     check (returned_at is null or returned_at >= taken_at)  
 );
 
-Insert data into 'records' table
+-- Insert data into 'records' table
 insert into records (book_id, reader_id, taken_at, returned_at) values
 (1, 1, '2024-01-10 10:00:00', '2024-01-20 15:30:00'),
 (2, 2, '2024-02-05 14:00:00', null),
@@ -29,8 +29,7 @@ insert into records (book_id, reader_id, taken_at, returned_at) values
 
 select b.title, r.name, ar.taken_at from books b
 left join (select book_id, reader_id, taken_at from records where returned_at is null) as ar on b.id = ar.book_id 
-left join readers r on ar.reader_id = r.id
-where ar.book_id is not null;
+join readers r on ar.reader_id = r.id where ar.book_id is not null;
 
 select b.title, count(b.title) as borrowed_books_count from books b
 left join (select book_id, taken_at from records) as ar on b.id = ar.book_id

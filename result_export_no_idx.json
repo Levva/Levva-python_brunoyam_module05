@@ -1,0 +1,59 @@
+[
+ {
+  "QUERY PLAN": "Nested Loop  (cost=0.29..90.87 rows=7 width=444) (actual time=0.091..0.098 rows=3.00 loops=1)"
+ },
+ {
+  "QUERY PLAN": "  Buffers: shared hit=13"
+ },
+ {
+  "QUERY PLAN": "  ->  Nested Loop  (cost=0.14..57.69 rows=7 width=230) (actual time=0.078..0.082 rows=3.00 loops=1)"
+ },
+ {
+  "QUERY PLAN": "        Buffers: shared hit=7"
+ },
+ {
+  "QUERY PLAN": "        ->  Seq Scan on records  (cost=0.00..24.50 rows=7 width=16) (actual time=0.032..0.034 rows=3.00 loops=1)"
+ },
+ {
+  "QUERY PLAN": "              Disabled: true"
+ },
+ {
+  "QUERY PLAN": "              Filter: ((returned_at IS NULL) AND (book_id IS NOT NULL))"
+ },
+ {
+  "QUERY PLAN": "              Rows Removed by Filter: 6"
+ },
+ {
+  "QUERY PLAN": "              Buffers: shared hit=1"
+ },
+ {
+  "QUERY PLAN": "        ->  Index Scan using books_pkey on books b  (cost=0.14..4.73 rows=1 width=222) (actual time=0.015..0.015 rows=1.00 loops=3)"
+ },
+ {
+  "QUERY PLAN": "              Index Cond: (id = records.book_id)"
+ },
+ {
+  "QUERY PLAN": "              Index Searches: 3"
+ },
+ {
+  "QUERY PLAN": "              Buffers: shared hit=6"
+ },
+ {
+  "QUERY PLAN": "  ->  Index Scan using readers_pkey on readers r  (cost=0.15..4.74 rows=1 width=222) (actual time=0.004..0.004 rows=1.00 loops=3)"
+ },
+ {
+  "QUERY PLAN": "        Index Cond: (id = records.reader_id)"
+ },
+ {
+  "QUERY PLAN": "        Index Searches: 3"
+ },
+ {
+  "QUERY PLAN": "        Buffers: shared hit=6"
+ },
+ {
+  "QUERY PLAN": "Planning Time: 0.217 ms"
+ },
+ {
+  "QUERY PLAN": "Execution Time: 0.140 ms"
+ }
+]
