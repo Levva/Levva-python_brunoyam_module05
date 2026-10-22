@@ -1,59 +1,74 @@
 [
  {
-  "QUERY PLAN": "Nested Loop  (cost=0.29..90.87 rows=7 width=444) (actual time=0.091..0.098 rows=3.00 loops=1)"
+  "QUERY PLAN": "Hash Join  (cost=13.96..29.19 rows=3 width=444) (actual time=0.074..0.076 rows=3.00 loops=1)"
  },
  {
-  "QUERY PLAN": "  Buffers: shared hit=13"
+  "QUERY PLAN": "  Hash Cond: (r.id = records.reader_id)"
  },
  {
-  "QUERY PLAN": "  ->  Nested Loop  (cost=0.14..57.69 rows=7 width=230) (actual time=0.078..0.082 rows=3.00 loops=1)"
+  "QUERY PLAN": "  Buffers: shared hit=3"
  },
  {
-  "QUERY PLAN": "        Buffers: shared hit=7"
+  "QUERY PLAN": "  ->  Seq Scan on readers r  (cost=0.00..13.20 rows=320 width=222) (actual time=0.024..0.024 rows=7.00 loops=1)"
  },
  {
-  "QUERY PLAN": "        ->  Seq Scan on records  (cost=0.00..24.50 rows=7 width=16) (actual time=0.032..0.034 rows=3.00 loops=1)"
+  "QUERY PLAN": "        Buffers: shared hit=1"
  },
  {
-  "QUERY PLAN": "              Disabled: true"
+  "QUERY PLAN": "  ->  Hash  (cost=13.92..13.92 rows=3 width=230) (actual time=0.043..0.044 rows=3.00 loops=1)"
  },
  {
-  "QUERY PLAN": "              Filter: ((returned_at IS NULL) AND (book_id IS NOT NULL))"
+  "QUERY PLAN": "        Buckets: 1024  Batches: 1  Memory Usage: 9kB"
  },
  {
-  "QUERY PLAN": "              Rows Removed by Filter: 6"
+  "QUERY PLAN": "        Buffers: shared hit=2"
  },
  {
-  "QUERY PLAN": "              Buffers: shared hit=1"
+  "QUERY PLAN": "        ->  Hash Join  (cost=1.13..13.92 rows=3 width=230) (actual time=0.038..0.041 rows=3.00 loops=1)"
  },
  {
-  "QUERY PLAN": "        ->  Index Scan using books_pkey on books b  (cost=0.14..4.73 rows=1 width=222) (actual time=0.015..0.015 rows=1.00 loops=3)"
+  "QUERY PLAN": "              Hash Cond: (b.id = records.book_id)"
  },
  {
-  "QUERY PLAN": "              Index Cond: (id = records.book_id)"
+  "QUERY PLAN": "              Buffers: shared hit=2"
  },
  {
-  "QUERY PLAN": "              Index Searches: 3"
+  "QUERY PLAN": "              ->  Seq Scan on books b  (cost=0.00..11.70 rows=170 width=222) (actual time=0.011..0.011 rows=10.00 loops=1)"
  },
  {
-  "QUERY PLAN": "              Buffers: shared hit=6"
+  "QUERY PLAN": "                    Buffers: shared hit=1"
  },
  {
-  "QUERY PLAN": "  ->  Index Scan using readers_pkey on readers r  (cost=0.15..4.74 rows=1 width=222) (actual time=0.004..0.004 rows=1.00 loops=3)"
+  "QUERY PLAN": "              ->  Hash  (cost=1.09..1.09 rows=3 width=16) (actual time=0.019..0.019 rows=3.00 loops=1)"
  },
  {
-  "QUERY PLAN": "        Index Cond: (id = records.reader_id)"
+  "QUERY PLAN": "                    Buckets: 1024  Batches: 1  Memory Usage: 9kB"
  },
  {
-  "QUERY PLAN": "        Index Searches: 3"
+  "QUERY PLAN": "                    Buffers: shared hit=1"
  },
  {
-  "QUERY PLAN": "        Buffers: shared hit=6"
+  "QUERY PLAN": "                    ->  Seq Scan on records  (cost=0.00..1.09 rows=3 width=16) (actual time=0.012..0.013 rows=3.00 loops=1)"
  },
  {
-  "QUERY PLAN": "Planning Time: 0.217 ms"
+  "QUERY PLAN": "                          Filter: ((returned_at IS NULL) AND (book_id IS NOT NULL))"
  },
  {
-  "QUERY PLAN": "Execution Time: 0.140 ms"
+  "QUERY PLAN": "                          Rows Removed by Filter: 6"
+ },
+ {
+  "QUERY PLAN": "                          Buffers: shared hit=1"
+ },
+ {
+  "QUERY PLAN": "Planning:"
+ },
+ {
+  "QUERY PLAN": "  Buffers: shared hit=103"
+ },
+ {
+  "QUERY PLAN": "Planning Time: 8.801 ms"
+ },
+ {
+  "QUERY PLAN": "Execution Time: 0.104 ms"
  }
 ]

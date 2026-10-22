@@ -10,6 +10,9 @@ from easy03 import Base
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+from settings import DATABASE_URL
+
+config.set_main_option("sqlalchemy.url", DATABASE_URL.replace("%", "%%"))
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -47,6 +50,7 @@ def run_migrations_offline() -> None:
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         include_name=include_name,
+        version_table="alembic_version_easy",
     )
 
     with context.begin_transaction():
@@ -70,7 +74,8 @@ def run_migrations_online() -> None:
         context.configure(
             connection=connection, 
             target_metadata=target_metadata,
-            include_name=include_name
+            include_name=include_name,
+            version_table="alembic_version_easy",
         )
 
         with context.begin_transaction():
