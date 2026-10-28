@@ -9,8 +9,10 @@ from sqlalchemy.orm import Session, sessionmaker, object_session
 
 from settings import DATABASE_URL
 
+
 class Base(DeclarativeBase):
     pass
+
 
 class BookORM(Base):
     __tablename__ = "books"
@@ -44,7 +46,7 @@ class BookORM(Base):
         )
         return times_borrowed >= 5
 
-        
+
 class ReaderORM(Base):
     __tablename__ = "readers"
 
@@ -53,6 +55,7 @@ class ReaderORM(Base):
 
     def __repr__(self):
         return f"Reader(id={self.id}, name={self.name})"
+
 
 class RecordORM(Base):
     __tablename__ = "records"
@@ -66,52 +69,39 @@ class RecordORM(Base):
     def __repr__(self):
         return f"Record(id={self.id}, book_id={self.book_id}, reader_id={self.reader_id}, taken_at={self.taken_at}, returned_at={self.returned_at})"
 
-def create_user(engine, username: str = "Unknown"):
-    SessionLocal = sessionmaker(bind=engine)
 
-    with SessionLocal() as session:
-        try:
-            stmt = insert(ReaderORM).values(
-                name=username
-            )
-
-            session.execute(stmt)
-            session.commit()
-        except Exception:
-            session.rollback()
-            raise
-
-def create_record(engine, book_id: int, reader_id: int, taken_at: datetime = func.current_timestamp(), returned_at: datetime = None):
-    SessionLocal = sessionmaker(bind=engine)
-
-    with SessionLocal() as session:
-        try:
-            stmt = insert(RecordORM).values(
-                book_id=book_id,
-                reader_id=reader_id,
-                taken_at=taken_at,
-                returned_at=returned_at
-            )
-            session.execute(stmt)
-            session.commit()
-        except Exception:
-            session.rollback()
-            raise
+def create_user(session, username: str = "Unknown"):
+    session.execute(insert(ReaderORM).values(name=username))
 
 
-def update_record(engine, record_id: int, returned_at: datetime = func.current_timestamp()):
-    SessionLocal = sessionmaker(bind=engine)
+def create_record(
+    session: Session,
+    book_id: int,
+    reader_id: int,
+    taken_at: datetime = func.current_timestamp(),
+    returned_at: datetime = None,
+):
+    session.execute(
+        insert(RecordORM).values(
+            book_id=book_id,
+            reader_id=reader_id,
+            taken_at=taken_at,
+            returned_at=returned_at,
+        )
+    )
 
-    with SessionLocal() as session:
-        try:
-            stmt = update(RecordORM).where(RecordORM.id == record_id).values(
-                returned_at=returned_at
-            )
-            session.execute(stmt)
-            session.commit()
-        except Exception:
-            session.rollback()
-            raise
+
+def update_record(
+    session: Session,
+    record_id: int,
+    returned_at: datetime = func.current_timestamp(),
+):
+    session.execute(
+        update(RecordORM)
+        .where(RecordORM.id == record_id)
+        .values(returned_at=returned_at)
+    )
+
 
 def get_records(session: Session):
     records = session.query(RecordORM).all()
@@ -119,27 +109,26 @@ def get_records(session: Session):
         print(record)
     return records
 
+
 def main(engine):
     SessionLocal = sessionmaker(bind=engine)
-    with SessionLocal() as session:
+    with SessionLocal.begin() as session:
         book = session.get(BookORM, 1)
         print(book.is_popular)
 
         for title, is_popular in session.execute(
-            select(BookORM.title, BookORM.is_popular) 
+            select(BookORM.title, BookORM.is_popular)
         ):
             print(title, is_popular)
 
-        create_user(engine, username="John Doe")
-        create_record(engine, book_id=5, reader_id=4)
+        create_user(session, username="John Doe")
+        create_record(session, book_id=5, reader_id=4)
         records = get_records(session)
-        update_record(engine, record_id=records[-1].id, returned_at=datetime.now())
+        update_record(session, record_id=records[-1].id, returned_at=datetime.now())
 
 
 if __name__ == "__main__":
-    
     engine = create_engine(DATABASE_URL, echo=True)
     Base.metadata.create_all(engine)
 
     main(engine)
-

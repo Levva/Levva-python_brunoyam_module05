@@ -35,6 +35,8 @@ with SessionLocal() as session:
 
 > Не хотите избавиться от копипасты? :)
 
+Внесла правки. Пришлось разобраться как работают эти сессии в sqlalchemy.orm. Сейчас без копипасты. [hard02.py](hard02.py)
+
 # hybrid_property
 
 ## `hybrid_property` - какие есть плюсы и минусы у такого подхода?
